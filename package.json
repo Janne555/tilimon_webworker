@@ -11,13 +11,15 @@
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
+    "@babel/plugin-transform-runtime": "^7.4.4",
     "@babel/preset-env": "^7.4.5",
     "babel-jest": "^24.8.0",
     "babel-loader": "^8.0.6",
+    "fake-indexeddb": "^2.1.1",
     "jest": "^24.8.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "build": "webpack"
   },
   "keywords": [],
