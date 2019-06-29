@@ -1,8 +1,9 @@
-import db from './database'
+import db from '../database'
+import { EVENT_ROW } from '../../constants';
 
 describe('Name of the group', () => {
   it('should ', async () => {
-    const id = await db.test.put({date: Date().now(), amount: 13.24, eventType: "korttimaksu", description: "kauppa" })
+    const id = await db[EVENT_ROW].put({date: Date.now(), amount: 13.24, eventType: "korttimaksu", description: "kauppa" })
   });
 });
 
