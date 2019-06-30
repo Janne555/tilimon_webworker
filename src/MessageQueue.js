@@ -1,9 +1,10 @@
-import messageHandler from "./messageHandler";
+import { messageHandler } from "./messageHandler";
 
 export default class MessageQueue {
-  constructor(postMessage) {
+  constructor(postMessage, onError) {
     this.messageQueue = []
     this.postMessage = postMessage
+    this.onError = onError
     this.busy = false
   }
 
@@ -17,10 +18,6 @@ export default class MessageQueue {
     this.postMessage(result)
     this.nextMessage()
   }
-  
-  onError = (error) => {
-    throw error
-  }
 
   nextMessage = () => {
     if (this.messageQueue.length < 1) {
@@ -28,6 +25,7 @@ export default class MessageQueue {
       return
     }
 
+    this.busy = true
     messageHandler(this.messageQueue.shift())
       .then(this.onFinish)
       .catch(this.onError)
