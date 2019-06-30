@@ -1,7 +1,7 @@
 import { PUT, GET, DELETE, SINGLE, BULK, TABLES } from "./constants";
 import db from "./database/database";
 
-export default function messageHandler({data}) {
+export function messageHandler({data}) {
   switch (data.method) {
     case PUT:
       return putHandler(data)
@@ -14,7 +14,7 @@ export default function messageHandler({data}) {
   }
 }
 
-function putHandler({ table, mode, payload }) {
+export function putHandler({ table, mode, payload }) {
   if (!TABLES.includes(table))
     throw Error("table not found")
   
