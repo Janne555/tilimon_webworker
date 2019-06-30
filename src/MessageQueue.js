@@ -1,10 +1,9 @@
-import MessageHandler from "./MessageHandler";
+import messageHandler from "./messageHandler";
 
 export default class MessageQueue {
   constructor(postMessage) {
     this.messageQueue = []
     this.postMessage = postMessage
-    this.messageHandler = new MessageHandler()
     this.busy = false
   }
 
@@ -18,6 +17,10 @@ export default class MessageQueue {
     this.postMessage(result)
     this.nextMessage()
   }
+  
+  onError = (error) => {
+    throw error
+  }
 
   nextMessage = () => {
     if (this.messageQueue.length < 1) {
@@ -25,7 +28,8 @@ export default class MessageQueue {
       return
     }
 
-    this.messageHandler.process(this.messageQueue.shift())
+    messageHandler(this.messageQueue.shift())
       .then(this.onFinish)
+      .catch(this.onError)
   }
 }
