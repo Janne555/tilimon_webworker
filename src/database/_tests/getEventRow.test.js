@@ -1,5 +1,5 @@
-import { filterByDate } from "../getEventRow";
-import { EQUALS, LTE, GTE } from "../../constants";
+import { filterByDate, filterByDescription } from "../getEventRow";
+import { EQUALS, LTE, GTE, ANY_OF, NONE_OF } from "../../constants";
 
 describe('getEventRow', () => {
   it('should ', () => {
@@ -42,5 +42,39 @@ describe('filterByDate', () => {
 
   it('should return true when comparing to an equal date and comparison operator is GTE', () => {
     expect(filterByDate({ date: dateB }, { comparisonOperator: GTE, date: dateB })).toBe(true)
+  });
+});
+
+describe('filterByDescription', () => {
+  const eventRow = { description: "kauppa" }
+
+  it('should return true when descriptions equal and restrictionGroup is equals', () => {
+    expect(filterByDescription(eventRow, { restrictionGroup: EQUALS, descriptions: ["kauppa"] })).toBe(true)
+    expect(filterByDescription(eventRow, { restrictionGroup: EQUALS, descriptions: ["kauppa", "kauppa"] })).toBe(true)
+  });
+
+  it('should return false when descriptions are unequal and restrictionGroup is equals', () => {
+    expect(filterByDescription(eventRow, { restrictionGroup: EQUALS, descriptions: ["matka"] })).toBe(false)
+    expect(filterByDescription(eventRow, { restrictionGroup: EQUALS, descriptions: ["kauppa", "matka"] })).toBe(false)
+  });
+
+  it('should return true when descriptions have atleast one equal and restrictionGroup is any of', () => {
+    expect(filterByDescription(eventRow, { restrictionGroup: ANY_OF, descriptions: ["kauppa"] })).toBe(true)
+    expect(filterByDescription(eventRow, { restrictionGroup: ANY_OF, descriptions: ["kauppa", "matka"] })).toBe(true)
+  });
+
+  it('should return false when descriptions have no equals and restrictionGroup is any of', () => {
+    expect(filterByDescription(eventRow, { restrictionGroup: ANY_OF, descriptions: ["matka"] })).toBe(false)
+    expect(filterByDescription(eventRow, { restrictionGroup: ANY_OF, descriptions: ["ruokala", "matka"] })).toBe(false)
+  });
+
+  it('should return true when descriptions have no equals and restrictionGroup is none of', () => {
+    expect(filterByDescription(eventRow, { restrictionGroup: NONE_OF, descriptions: ["matka"] })).toBe(true)
+    expect(filterByDescription(eventRow, { restrictionGroup: NONE_OF, descriptions: ["ruokala", "matka"] })).toBe(true)
+  });
+
+  it('should return false when descriptions have some equal and restrictionGroup is none of', () => {
+    expect(filterByDescription(eventRow, { restrictionGroup: NONE_OF, descriptions: ["kauppa"] })).toBe(false)
+    expect(filterByDescription(eventRow, { restrictionGroup: NONE_OF, descriptions: ["ruokala", "kauppa"] })).toBe(false)
   });
 });
