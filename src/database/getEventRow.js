@@ -1,5 +1,5 @@
 import db from './database'
-import { EVENT_ROW, FILTER, FILTER_GROUP, DATE, AMOUNT, DESCRIPTION, EQUALS, ANY_OF, NONE_OF } from "../constants";
+import { EVENT_ROW, FILTER, FILTER_GROUP, DATE, AMOUNT, DESCRIPTION, EQUALS, ANY_OF, NONE_OF, GTE, LTE } from "../constants";
 
 export async function getEventRow(filterGroupId) {
   let eventRowCollection = db[EVENT_ROW].toCollection()
@@ -39,11 +39,11 @@ function runFilter(filter) {
 
 export const filterByAmount = (eventRow, { comparisonOperator, amount }) => {
   switch (comparisonOperator) {
-    case "EQ":
+    case EQUALS:
       return eventRow.amount === amount
-    case "GTE":
+    case GTE:
       return eventRow.amount >= amount
-    case "LTE":
+    case LTE:
       return eventRow.amount <= amount
     default:
       throw new Error("invalid comparison operator")
@@ -64,14 +64,14 @@ export const filterByDescription = (eventRow, { restrictionGroup, descriptions }
   }
 }
 
-export const filterByDate = (eventRow, { comparisonOperator, timestamp }) => {
+export const filterByDate = (eventRow, { comparisonOperator, date }) => {
   switch (comparisonOperator) {
-    case "EQ":
-      return eventRow.date === timestamp
-    case "GTE":
-      return eventRow.date >= timestamp
-    case "LTE":
-      return eventRow.date <= timestamp
+    case EQUALS:
+      return eventRow.date === date
+    case GTE:
+      return eventRow.date >= date
+    case LTE:
+      return eventRow.date <= date
     default:
       throw new Error("invalid comparison operator")
   }
