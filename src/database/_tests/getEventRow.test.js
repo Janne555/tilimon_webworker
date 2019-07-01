@@ -1,9 +1,53 @@
-import { filterByDate, filterByDescription, filterByAmount } from "../getEventRow";
-import { EQUALS, LTE, GTE, ANY_OF, NONE_OF } from "../../constants";
+import { filterByDate, filterByDescription, filterByAmount, runFilter, getEventRow } from "../getEventRow";
+import { EQUALS, LTE, GTE, ANY_OF, NONE_OF, DATE, AMOUNT, DESCRIPTION, EVENT_ROW, TABLES, FILTER, FILTER_GROUP } from "../../constants";
+import db from '../database'
 
 describe('getEventRow', () => {
-  it('should ', () => {
+  let filterGroupId
+  const eventRow = { date: Date.now(), amount: 13.24, eventType: "korttimaksu", description: "kauppa" }
+  const eventRow2 = { date: Date.now(), amount: 13.24, eventType: "korttimaksu", description: "ruokala" }
 
+  beforeAll(async () => {
+    await db[EVENT_ROW].bulkPut([eventRow, eventRow2])
+    const filterId = await db[FILTER].put({ field: DESCRIPTION, restrictionGroup: EQUALS, descriptions: ["kauppa"] })
+    filterGroupId = await db[FILTER_GROUP].put({ filterIds: [filterId] })
+  })
+
+  it('should handle get eventRow', async () => {
+    expect(await getEventRow(filterGroupId)).toEqual([{ ...eventRow, id: 1 }])
+  });
+
+  it('should get all if no filterGroupId', async () => {
+    expect(await getEventRow()).toEqual([{ ...eventRow, id: 1 }, { ...eventRow2, id: 2 }])
+  });
+
+  
+  it('should throw if filtergroupid is invalid', async () => {
+    try {
+      await getEventRow("asd")
+    } catch (error) {
+      expect(error.message).toEqual("no filter group found by id: asd")
+    }
+  });
+});
+
+describe('runFilter', () => {
+  const eventRow = { description: "kauppa", amount: 13.23, date: Date.now() }
+
+  it('should handle date', () => {
+    expect(runFilter({ field: DATE, comparisonOperator: GTE })(eventRow)).toBe(false)
+  });
+
+  it('should handle amount', () => {
+    expect(runFilter({ field: AMOUNT, comparisonOperator: GTE })(eventRow)).toBe(false)
+  });
+
+  it('should handle description', () => {
+    expect(runFilter({ field: DESCRIPTION, restrictionGroup: ANY_OF, descriptions: [] })(eventRow)).toBe(false)
+  });
+
+  it('should throw on unknown field', () => {
+    expect(() => runFilter({ field: "asd" })(eventRow)).toThrowError("unknown field for filter")
   });
 });
 
@@ -43,6 +87,10 @@ describe('filterByDate', () => {
   it('should return true when comparing to an equal date and comparison operator is GTE', () => {
     expect(filterByDate({ date: dateB }, { comparisonOperator: GTE, date: dateB })).toBe(true)
   });
+
+  it('should throw error if comparison operator is unknown', () => {
+    expect(() => filterByDate({ date: dateB }, { comparisonOperator: "asd", date: dateB })).toThrowError("invalid comparison operator")
+  });
 });
 
 describe('filterByDescription', () => {
@@ -77,6 +125,10 @@ describe('filterByDescription', () => {
     expect(filterByDescription(eventRow, { restrictionGroup: NONE_OF, descriptions: ["kauppa"] })).toBe(false)
     expect(filterByDescription(eventRow, { restrictionGroup: NONE_OF, descriptions: ["ruokala", "kauppa"] })).toBe(false)
   });
+
+  it('should throw error if restriction group is unknown', () => {
+    expect(() => filterByDescription(eventRow, { restrictionGroup: "asd", descriptions: ["ruokala", "kauppa"] })).toThrowError("invalid restriction group")
+  });
 });
 
 describe('filterByAmount', () => {
@@ -110,5 +162,9 @@ describe('filterByAmount', () => {
 
   it('should return true when comparing to an equal amount and comparison operator is GTE', () => {
     expect(filterByAmount({ amount: 10.12 }, { comparisonOperator: GTE, amount: 10.12 })).toBe(true)
+  });
+
+  it('should throw error if restriction group is unknown', () => {
+    expect(() => filterByAmount({ amount: 10.12 }, { comparisonOperator: "asd", amount: 10.12 })).toThrowError("invalid comparison operator")
   });
 });
