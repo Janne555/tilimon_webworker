@@ -1,12 +1,13 @@
 import { PUT, GET, DELETE, SINGLE, BULK, TABLES } from "./constants";
 import db from "./database/database";
+import { getHandler } from "./database/getHandler";
 
-export function messageHandler({data}) {
+export function messageHandler({ data }) {
   switch (data.method) {
     case PUT:
       return putHandler(data)
     case GET:
-      throw Error("not implemented yet")
+      return getHandler(data)
     case DELETE:
       throw Error("not implemented yet")
     default:
@@ -17,7 +18,7 @@ export function messageHandler({data}) {
 export function putHandler({ table, mode, payload }) {
   if (!TABLES.includes(table))
     throw Error("table not found")
-  
+
   switch (mode) {
     case SINGLE:
       return single()
