@@ -17,12 +17,12 @@ export async function getEventRow(filterGroupId) {
     const filterGroup = await db[FILTER_GROUP].get(filterGroupId)
     if (!filterGroup)
       throw Error(`no filter group found by id: ${filterGroupId}`)
-
-    return await db[FILTER].where("id").equals(filterGroup.filterIds).toArray()
+    const temp = await db[FILTER].where("id").anyOf(filterGroup.filterIds).toArray()
+    return temp
   }
 }
 
-function runFilter(filter) {
+export function runFilter(filter) {
   return function (eventRow) {
     switch (filter.field) {
       case DATE:
