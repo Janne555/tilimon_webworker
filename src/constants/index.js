@@ -21,3 +21,5 @@ export const BULK = 'bulk'
 export const EQUALS = 'equals'
 export const ANY_OF = 'anyOf'
 export const NONE_OF = "noneOf"
+export const GTE = 'gte'
+export const LTE = 'lte'
