@@ -1,14 +1,21 @@
 import db from './database'
-import { EVENT_ROW, FILTER, FILTER_GROUP, DATE, AMOUNT, DESCRIPTION, EQUALS, ANY_OF, NONE_OF, GTE, LTE } from "../constants";
+import { EVENT_ROW, FILTER, FILTER_GROUP, DATE, AMOUNT, DESCRIPTION, EQUALS, ANY_OF, NONE_OF, GTE, LTE, TAG } from "../constants";
 
-export async function getEventRow(filterGroupId) {
+export async function getEventRow(filterGroupId, withTags) {
   let eventRowCollection = db[EVENT_ROW].toCollection()
   const filters = await getFilters()
+
   filters.forEach(filter => {
     eventRowCollection.filter(runFilter(filter))
   })
 
-  return await eventRowCollection.toArray()
+  if (withTags) {
+    let eventRows = await eventRowCollection.toArray()
+    let tags = await db[TAG].toCollection().toArray()
+    return eventRows.map(eventRow => ({ ...eventRow, tags: tags.filter(tag => tag.description === eventRow.description) }))
+  }
+
+  return eventRowCollection.toArray()
 
   async function getFilters() {
     if (!filterGroupId)
@@ -17,8 +24,7 @@ export async function getEventRow(filterGroupId) {
     const filterGroup = await db[FILTER_GROUP].get(filterGroupId)
     if (!filterGroup)
       throw Error(`no filter group found by id: ${filterGroupId}`)
-    const temp = await db[FILTER].where("id").anyOf(filterGroup.filterIds).toArray()
-    return temp
+    return await db[FILTER].where("id").anyOf(filterGroup.filterIds).toArray()
   }
 }
 
