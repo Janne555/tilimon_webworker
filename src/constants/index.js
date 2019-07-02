@@ -23,3 +23,14 @@ export const ANY_OF = 'anyOf'
 export const NONE_OF = "noneOf"
 export const GTE = 'gte'
 export const LTE = 'lte'
+
+export const CALCULATE = 'calculate'
+export const SUM = 'sum'
+export const AVERAGE = 'average'
+export const TOTAL_SUM = 'totalSum'
+export const TOTAL_AVERAGE = 'totalAverage'
+
+export const DAY = 'day'
+export const WEEK = 'week'
+export const MONTH = 'month'
+export const YEAR = 'year'
