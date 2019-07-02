@@ -1,5 +1,5 @@
 import { filterByDate, filterByDescription, filterByAmount, runFilter, getEventRow } from "../getEventRow";
-import { EQUALS, LTE, GTE, ANY_OF, NONE_OF, DATE, AMOUNT, DESCRIPTION, EVENT_ROW, TABLES, FILTER, FILTER_GROUP } from "../../constants";
+import { EQUALS, LTE, GTE, ANY_OF, NONE_OF, DATE, AMOUNT, DESCRIPTION, EVENT_ROW, FILTER, FILTER_GROUP, TAG } from "../../constants";
 import db from '../database'
 
 describe('getEventRow', () => {
@@ -11,6 +11,7 @@ describe('getEventRow', () => {
     await db[EVENT_ROW].bulkPut([eventRow, eventRow2])
     const filterId = await db[FILTER].put({ field: DESCRIPTION, restrictionGroup: EQUALS, descriptions: ["kauppa"] })
     filterGroupId = await db[FILTER_GROUP].put({ filterIds: [filterId] })
+    await db[TAG].put({ name: "turhat", description: "ruokala" })
   })
 
   it('should handle get eventRow', async () => {
@@ -21,13 +22,16 @@ describe('getEventRow', () => {
     expect(await getEventRow()).toEqual([{ ...eventRow, id: 1 }, { ...eventRow2, id: 2 }])
   });
 
-  
   it('should throw if filtergroupid is invalid', async () => {
     try {
       await getEventRow("asd")
     } catch (error) {
       expect(error.message).toEqual("no filter group found by id: asd")
     }
+  });
+
+  it('should add tags if option is true', async () => {
+    expect(await getEventRow(undefined, true)).toEqual([{ ...eventRow, id: 1, tags: [] }, { ...eventRow2, id: 2, tags: [{ description: "ruokala", id: 1, name: "turhat" }] }])
   });
 });
 
