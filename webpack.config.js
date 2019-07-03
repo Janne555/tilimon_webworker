@@ -1,11 +1,16 @@
 const path = require('path');
+const libraryName = 'library';
+const outputFile = libraryName + '.js';
 
 module.exports = {
   entry: './src/index.js',
   mode: 'development',
   output: {
-    filename: 'main.js',
-    path: path.resolve(__dirname, 'dist')
+    path: __dirname + '/lib',
+    filename: outputFile,
+    library: libraryName,
+    libraryTarget: 'umd',
+    umdNamedDefine: true
   },
   module: {
     rules: [
