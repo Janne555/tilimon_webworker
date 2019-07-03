@@ -3,13 +3,15 @@ const worker = new Worker();
 
 let buffer = []
 
-worker.onmessage = function(value) {
+worker.onmessage = function (value) {
   buffer.shift()(value)
 }
 
-export function postMessage(message) {
+function postMessage(message) {
   worker.postMessage(message)
   return new Promise(resolve => {
     buffer.push(resolve)
   })
 }
+
+export { postMessage }
