@@ -9,13 +9,14 @@ export default class MessageQueue {
   }
 
   onMessage = (message) => {
+    console.debug("received message", message)
     this.messageQueue.push(message)
     if (!this.busy)
       this.nextMessage()
   }
 
   onFinish = (result) => {
-    this.postMessage(result)
+    this.postMessage({ result, queueId: this.messageQueueId })
     this.nextMessage()
   }
 
@@ -25,9 +26,18 @@ export default class MessageQueue {
       return
     }
 
+    this.handleMessage(this.takeNextMessageInQueue())
+  }
+
+  handleMessage = (message) => {
     this.busy = true
-    messageHandler(this.messageQueue.shift())
+    this.messageQueueId = message.data.queueId
+    messageHandler(message)
       .then(this.onFinish)
       .catch(this.onError)
+  }
+
+  takeNextMessageInQueue = () => {
+    return this.messageQueue.shift()
   }
 }
