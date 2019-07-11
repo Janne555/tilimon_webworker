@@ -2,26 +2,26 @@ import db from './database'
 import { EVENT_ROW, FILTER, FILTER_GROUP, DATE, AMOUNT, DESCRIPTION, EQUALS, ANY_OF, NONE_OF, GTE, LTE, TAG } from "../constants";
 
 export async function getEventRow(filterGroupId, withTags) {
-  let eventRowCollection = db[EVENT_ROW].toCollection()
+  let eventRows = await db[EVENT_ROW].toArray()
   const filters = await getFilters()
 
   filters.forEach(filter => {
-    eventRowCollection.filter(runFilter(filter))
+    eventRows = eventRows.filter(runFilter(filter))
   })
 
   if (withTags) {
-    let eventRows = await eventRowCollection.toArray()
     let tags = await db[TAG].toCollection().toArray()
     return eventRows.map(eventRow => ({ ...eventRow, tags: tags.filter(tag => tag.description === eventRow.description) }))
   }
 
-  return eventRowCollection.toArray()
+  return eventRows
 
   async function getFilters() {
     if (!filterGroupId)
       return []
 
     const filterGroup = await db[FILTER_GROUP].get(filterGroupId)
+    console.log(filterGroupId, filterGroup)
     if (!filterGroup)
       throw Error(`no filter group found by id: ${filterGroupId}`)
     return await db[FILTER].where("id").anyOf(filterGroup.filterIds).toArray()
@@ -43,16 +43,16 @@ export function runFilter(filter) {
   }
 }
 
-export const filterByAmount = (eventRow, { comparisonOperator, amount }) => {
+export const filterByAmount = (eventRow, { comparisonOperator, value }) => {
   switch (comparisonOperator) {
     case EQUALS:
-      return eventRow.amount === amount
+      return eventRow.amount === value
     case GTE:
-      return eventRow.amount >= amount
+      return eventRow.amount >= value
     case LTE:
-      return eventRow.amount <= amount
+      return eventRow.amount <= value
     default:
-      throw new Error("invalid comparison operator")
+      throw new Error(`invalid comparison operator: ${comparisonOperator}`)
   }
 }
 

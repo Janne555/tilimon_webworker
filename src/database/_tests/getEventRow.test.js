@@ -137,38 +137,38 @@ describe('filterByDescription', () => {
 
 describe('filterByAmount', () => {
   it('should return true when comparing equality among equal amounts', () => {
-    expect(filterByAmount({ amount: 10.12 }, { comparisonOperator: EQUALS, amount: 10.12 })).toBe(true)
+    expect(filterByAmount({ amount: 10.12 }, { comparisonOperator: EQUALS, value: 10.12 })).toBe(true)
   });
 
   it('should return false when comparing equality among uneqaual amounts', () => {
-    expect(filterByAmount({ amount: 10.12 }, { comparisonOperator: EQUALS, amount: 10.11 })).toBe(false)
+    expect(filterByAmount({ amount: 10.12 }, { comparisonOperator: EQUALS, value: 10.11 })).toBe(false)
   });
 
   it('should return false when comparing to a lower amount and comparison operator is LTE', () => {
-    expect(filterByAmount({ amount: 10.12 }, { comparisonOperator: LTE, amount: 10.11 })).toBe(false)
+    expect(filterByAmount({ amount: 10.12 }, { comparisonOperator: LTE, value: 10.11 })).toBe(false)
   });
 
   it('should return true when comparing to a greater amount and comparison operator is LTE', () => {
-    expect(filterByAmount({ amount: 10.12 }, { comparisonOperator: LTE, amount: 10.14 })).toBe(true)
+    expect(filterByAmount({ amount: 10.12 }, { comparisonOperator: LTE, value: 10.14 })).toBe(true)
   });
 
   it('should return true when comparing to an equal amount and comparison operator is LTE', () => {
-    expect(filterByAmount({ amount: 10.12 }, { comparisonOperator: LTE, amount: 10.12 })).toBe(true)
+    expect(filterByAmount({ amount: 10.12 }, { comparisonOperator: LTE, value: 10.12 })).toBe(true)
   });
 
   it('should return true when comparing to a lower amount and comparison operator is GTE', () => {
-    expect(filterByAmount({ amount: 10.12 }, { comparisonOperator: GTE, amount: 10.11 })).toBe(true)
+    expect(filterByAmount({ amount: 10.12 }, { comparisonOperator: GTE, value: 10.11 })).toBe(true)
   });
 
   it('should return false when comparing to an greater amount and comparison operator is GTE', () => {
-    expect(filterByAmount({ amount: 10.12 }, { comparisonOperator: GTE, amount: 10.13 })).toBe(false)
+    expect(filterByAmount({ amount: 10.12 }, { comparisonOperator: GTE, value: 10.13 })).toBe(false)
   });
 
   it('should return true when comparing to an equal amount and comparison operator is GTE', () => {
-    expect(filterByAmount({ amount: 10.12 }, { comparisonOperator: GTE, amount: 10.12 })).toBe(true)
+    expect(filterByAmount({ amount: 10.12 }, { comparisonOperator: GTE, value: 10.12 })).toBe(true)
   });
 
   it('should throw error if restriction group is unknown', () => {
-    expect(() => filterByAmount({ amount: 10.12 }, { comparisonOperator: "asd", amount: 10.12 })).toThrowError("invalid comparison operator")
+    expect(() => filterByAmount({ amount: 10.12 }, { comparisonOperator: "asd", value: 10.12 })).toThrowError("invalid comparison operator")
   });
 });
