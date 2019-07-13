@@ -8,7 +8,8 @@ db.version(1).stores({
   [FILTER]: `++id`,
   [FILTER_GROUP]: `++id`,
   [TAG]: `++id,${NAME},${DESCRIPTION}`,
-  [MODULE]: `++id`
+  [MODULE]: `++id`,
+  log: '++id,time,timestamp,tag'
 })
 
 export default db

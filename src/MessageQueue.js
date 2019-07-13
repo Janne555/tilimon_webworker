@@ -1,4 +1,5 @@
 import { messageHandler } from "./messageHandler";
+import { logMessage, log } from "./logger";
 
 export default class MessageQueue {
   constructor(postMessage, onError) {
@@ -9,13 +10,14 @@ export default class MessageQueue {
   }
 
   onMessage = (message) => {
-    console.debug("received message", message)
+    logMessage("onMessage", message)
     this.messageQueue.push(message)
     if (!this.busy)
       this.nextMessage()
   }
 
   onFinish = (result) => {
+    log("onFinish", `queueId: ${this.messageQueueId}`)
     this.postMessage({ result, queueId: this.messageQueueId })
     this.nextMessage()
   }
@@ -29,12 +31,17 @@ export default class MessageQueue {
     this.handleMessage(this.takeNextMessageInQueue())
   }
 
+  handleError = (error) => {
+    log('messageQueueErrorHandler', error.message)
+    this.onError(error)
+  }
+
   handleMessage = (message) => {
     this.busy = true
     this.messageQueueId = message.data.queueId
     messageHandler(message)
       .then(this.onFinish)
-      .catch(this.onError)
+      .catch(this.handleError)
   }
 
   takeNextMessageInQueue = () => {
