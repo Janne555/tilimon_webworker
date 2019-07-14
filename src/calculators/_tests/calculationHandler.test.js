@@ -1,5 +1,6 @@
 import { dayGroupKey, weekGroupKey, monthGroupKey, yearGroupKey, groupEventRows, calculationHandler } from "../calculationHandler";
-import { DAY, WEEK, MONTH, YEAR, SUM, AVERAGE, TOTAL_SUM, TOTAL_AVERAGE } from "../../constants";
+import { DAY, WEEK, MONTH, YEAR, SUM, AVERAGE, TOTAL_SUM, TOTAL_AVERAGE, EVENT_ROW } from "../../constants";
+import db from "../../database/database";
 const getHandler = require('../../database/getHandler')
 function eventRows() {
   return [
@@ -35,8 +36,22 @@ function eventRows() {
 }
 
 describe('calculationHandler', () => {
-  jest.spyOn(getHandler, 'getHandler').mockImplementation(() => Promise.resolve(eventRows()))
+
+  it('should integrate', async () => {
+    await db[EVENT_ROW].bulkPut(
+      [
+        { date: Date.now(), amount: 13.24, eventType: "korttimaksu", description: "kauppa" },
+        { date: Date.now(), amount: 13.24, eventType: "korttimaksu", description: "ruokala" }
+      ])
+
+    return calculationHandler({ grouping: DAY, calculation: SUM })
+      .then(result => {
+        expect(result).toEqual([26.48])
+      })
+  })
+
   it('should calculate grouped sum', () => {
+    jest.spyOn(getHandler, 'getHandler').mockImplementation(() => Promise.resolve(eventRows()))
     return calculationHandler({ grouping: DAY, calculation: SUM })
       .then(result => {
         expect(result).toEqual([607, -8.23, -7.35, -9, -17.6])
@@ -44,6 +59,7 @@ describe('calculationHandler', () => {
   });
 
   it('should calculate grouped average', () => {
+    jest.spyOn(getHandler, 'getHandler').mockImplementation(() => Promise.resolve(eventRows()))
     return calculationHandler({ grouping: DAY, calculation: AVERAGE })
       .then(result => {
         expect(result).toEqual([607, -8.23, -3.675, -9, -8.8])
@@ -51,6 +67,7 @@ describe('calculationHandler', () => {
   });
 
   it('should calculate total sum', () => {
+    jest.spyOn(getHandler, 'getHandler').mockImplementation(() => Promise.resolve(eventRows()))
     return calculationHandler({ grouping: DAY, calculation: TOTAL_SUM })
       .then(result => {
         expect(result).toBeCloseTo(564.8199)
@@ -58,6 +75,8 @@ describe('calculationHandler', () => {
   });
 
   it('should calculate total average', () => {
+    jest.spyOn(getHandler, 'getHandler').mockImplementation(() => Promise.resolve(eventRows()))
+
     return calculationHandler({ grouping: DAY, calculation: TOTAL_AVERAGE })
       .then(result => {
         expect(result).toBeCloseTo(112.9639)
@@ -65,6 +84,7 @@ describe('calculationHandler', () => {
   });
 
   it('should throw on unknown calculation', () => {
+    jest.spyOn(getHandler, 'getHandler').mockImplementation(() => Promise.resolve(eventRows()))
     return calculationHandler({ grouping: DAY, calculation: "asd" })
       .catch(error => {
         expect(error.message).toEqual("unknown calculation")
@@ -72,6 +92,7 @@ describe('calculationHandler', () => {
   });
 
   it('should throw on unknown calculation', () => {
+    jest.spyOn(getHandler, 'getHandler').mockImplementation(() => Promise.resolve(eventRows()))
     return calculationHandler({ grouping: "ASd", calculation: SUM })
       .catch(error => {
         expect(error.message).toEqual("unknown grouping")

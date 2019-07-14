@@ -8,13 +8,13 @@ import getMonth from 'date-fns/get_month'
 export async function calculationHandler({ filterGroupId, grouping, calculation }) {
   switch (calculation) {
     case SUM:
-      return groupedSum(groupEventRows(grouping, await getHandler(EVENT_ROW, filterGroupId)))
+      return groupedSum(groupEventRows(grouping, await getHandler({ table: EVENT_ROW, filterGroupId })))
     case AVERAGE:
-      return groupedAverage(groupEventRows(grouping, await getHandler(EVENT_ROW, filterGroupId)))
+      return groupedAverage(groupEventRows(grouping, await getHandler({ table: EVENT_ROW, filterGroupId })))
     case TOTAL_SUM:
-      return totalSum(groupEventRows(grouping, await getHandler(EVENT_ROW, filterGroupId)))
+      return totalSum(groupEventRows(grouping, await getHandler({ table: EVENT_ROW, filterGroupId })))
     case TOTAL_AVERAGE:
-      return totalAverage(groupEventRows(grouping, await getHandler(EVENT_ROW, filterGroupId)))
+      return totalAverage(groupEventRows(grouping, await getHandler({ table: EVENT_ROW, filterGroupId })))
     default:
       throw Error("unknown calculation")
   }
