@@ -29,7 +29,8 @@
   "scripts": {
     "test": "jest --watch",
     "build": "webpack --config webpack.prod.js",
-    "dev": "webpack --config webpack.dev.js"
+    "dev": "webpack --config webpack.dev.js",
+    "preinstall": "sh ./install.sh"
   },
   "keywords": [],
   "author": "",
