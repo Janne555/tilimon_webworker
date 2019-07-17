@@ -30,7 +30,7 @@
     "test": "jest --watch",
     "build": "webpack --config webpack.prod.js",
     "dev": "webpack --config webpack.dev.js",
-    "prepare": "sh ./install.sh"
+    "install": "sh ./install.sh"
   },
   "keywords": [],
   "author": "",
