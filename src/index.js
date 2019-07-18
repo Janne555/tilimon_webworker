@@ -1,14 +1,18 @@
 import { EVENT_ROW, PUT, BULK } from './constants'
 import { postMessage } from './services/workerService'
 
-export async function putEventRows(evenRows) {
+async function putEventRows(eventRows) {
   const message = new PutMessageBuilder()
     .setTable(EVENT_ROW)
     .setMode(BULK)
-    .setPayload(evenRows)
+    .setPayload(eventRows)
     .build()
   const result = await postMessage(message)
   return result
+}
+
+export default {
+  putEventRows
 }
 
 class PutMessageBuilder {
