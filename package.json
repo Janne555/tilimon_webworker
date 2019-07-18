@@ -32,7 +32,7 @@
     "test": "jest --watch",
     "build": "webpack --config webpack.prod.js",
     "dev": "webpack --config webpack.dev.js",
-    "prepare": "npx babel src --out-dir cjs --ignore \"src/**/*.test.js\"",
+    "prepare": "",
     "install": "sh ./install.sh"
   },
   "keywords": [],
