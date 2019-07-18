@@ -1,5 +1,11 @@
-const path = require('path')
-
 module.exports = {
-  entry: './cjs/index.js'
+  entry: './cjs/index.js',
+  module: {
+    rules: [
+      {
+        test: /\.worker\.js$/,
+        use: { loader: 'worker-loader' }
+      }
+    ]
+  }
 }
