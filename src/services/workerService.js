@@ -1,4 +1,4 @@
-import Worker from './index.worker.js'
+import Worker from '../index.worker.js'
 import shortid from 'shortid'
 
 let resolveQueue = {}
