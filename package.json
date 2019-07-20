@@ -16,8 +16,7 @@
     "shortid": "^2.2.14",
     "webpack": "^4.35.0",
     "webpack-cli": "^3.3.5",
-    "webpack-merge": "^4.2.1",
-    "worker-loader": "^2.0.0"
+    "webpack-merge": "^4.2.1"
   },
   "devDependencies": {
     "@types/jest": "^24.0.15",

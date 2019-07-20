@@ -1,11 +1,3 @@
 module.exports = {
-  entry: './cjs/index.js',
-  module: {
-    rules: [
-      {
-        test: /\.worker\.js$/,
-        use: { loader: 'worker-loader' }
-      }
-    ]
-  }
+  entry: './cjs/index.worker.js'
 }
